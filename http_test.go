@@ -6,7 +6,17 @@ import (
 	"testing"
 )
 
-type dummyAuthenticator struct {
+type dummyAuth struct {
+	usernameSent, passwordSent string
+	called                     int
+	ret                        bool
+}
+
+func (a *dummyAuth) authenticate(username, password string) (bool, error) {
+	a.usernameSent = username
+	a.passwordSent = password
+	a.called += 1
+	return a.ret, nil
 }
 
 func TestRootHandlerServesLoaderScript(t *testing.T) {
@@ -31,7 +41,7 @@ func TestKeysHandlerRequiresAuthentication(t *testing.T) {
 	response := httptest.NewRecorder()
 	request, _ := http.NewRequest("GET", "", nil)
 
-	server := server{}
+	server := server{authenticator: &dummyAuth{}}
 	server.keysHandler(response, request)
 
 	code := response.Code
@@ -49,9 +59,9 @@ func TestKeysHandlerRequiresValidCredentials(t *testing.T) {
 	response := httptest.NewRecorder()
 	request, _ := http.NewRequest("GET", "", nil)
 
-	request.SetBasicAuth("crome", "supersecurepassword")
+	request.SetBasicAuth("cromega", "supersecurepassword")
 
-	server := server{}
+	server := server{authenticator: &dummyAuth{ret: true}}
 	server.keysHandler(response, request)
 
 	code := response.Code
@@ -60,13 +70,36 @@ func TestKeysHandlerRequiresValidCredentials(t *testing.T) {
 	}
 }
 
+func TestKeysHandlerAuthenticatesTheRequest(t *testing.T) {
+	response := httptest.NewRecorder()
+	request, _ := http.NewRequest("GET", "", nil)
+
+	request.SetBasicAuth("cromega", "supersecurepassword")
+
+	auth := &dummyAuth{ret: true}
+	server := server{authenticator: auth}
+	server.keysHandler(response, request)
+
+	if auth.called != 1 {
+		t.Error("the authenticator was not called")
+	}
+
+	if auth.usernameSent != "cromega" {
+		t.Error("sent the wrong username to the authenticator: ", auth.usernameSent)
+	}
+
+	if auth.passwordSent != "supersecurepassword" {
+		t.Error("sent the wrong password to the authenticator: ", auth.passwordSent)
+	}
+}
+
 func TestKeysHandlerRespondsWithKey(t *testing.T) {
 	response := httptest.NewRecorder()
 	request, _ := http.NewRequest("GET", "", nil)
 
-	request.SetBasicAuth("crome", "supersecurepassword")
+	request.SetBasicAuth("cromega", "supersecurepassword")
 
-	server := server{SSHKey: "ssh key"}
+	server := server{SSHKey: "ssh key", authenticator: &dummyAuth{ret: true}}
 	server.keysHandler(response, request)
 
 	body := response.Body.String()

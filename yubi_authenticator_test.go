@@ -1,28 +1,64 @@
 package main
 
 import (
-	"fmt"
-	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
+	"regexp"
 	"testing"
 )
 
 func TestYubiAuthenticatorSendsAuthRequest(t *testing.T) {
-	requestBody := ""
+	var userid, otp, nonce string
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		defer r.Body.Close()
-		res, _ := ioutil.ReadAll(r.Body)
-		requestBody = string(res)
-		fmt.Println(r.URL)
+		r.ParseForm()
+		userid = r.Form["id"][0]
+		otp = r.Form["otp"][0]
+		nonce = r.Form["nonce"][0]
 	}))
 	defer server.Close()
 
 	auth := yubiAuthenticator{apiEndpoint: server.URL, apiKey: "key"}
-	auth.authenticate("password")
+	auth.authenticate("username", "password")
 
-	if requestBody != "adsasdads" {
-		t.Error("body: ")
+	if userid != "key" {
+		t.Error("authenticator sends the wrong key: ", userid)
 	}
 
+	if otp != "password" {
+		t.Error("authenticator sends the wrong password: ", otp)
+	}
+
+	matches, _ := regexp.MatchString("^[0-9a-f]{32}$", nonce)
+	if !matches {
+		t.Error("authenticator sends the wrong nonce: ", nonce)
+	}
+
+}
+
+func TestYubiAuthenticatorReturnsTrueIfResponseIsOk(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(200)
+	}))
+	defer server.Close()
+
+	auth := yubiAuthenticator{apiEndpoint: server.URL, apiKey: "key"}
+	success, _ := auth.authenticate("username", "password")
+
+	if !success {
+		t.Error("auth should have returned true")
+	}
+}
+
+func TestYubiAuthenticatorReturnsFalseIfResponseIsNotOk(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(401)
+	}))
+	defer server.Close()
+
+	auth := yubiAuthenticator{apiEndpoint: server.URL, apiKey: "key"}
+	success, _ := auth.authenticate("username", "password")
+
+	if success {
+		t.Error("auth should have returned false")
+	}
 }

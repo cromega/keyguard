@@ -8,9 +8,10 @@ import (
 var config configuration
 
 type server struct {
-	config       configuration
-	SSHKey       string
-	LoaderScript string
+	config        configuration
+	SSHKey        string
+	LoaderScript  string
+	authenticator authenticator
 }
 
 func main() {

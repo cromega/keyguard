@@ -12,8 +12,15 @@ func (s *server) rootHandler(w http.ResponseWriter, r *http.Request) {
 func (s *server) keysHandler(w http.ResponseWriter, r *http.Request) {
 	username, password, _ := r.BasicAuth()
 
-	if username != "crome" || password != "supersecurepassword" {
+	authenticated, err := s.authenticator.authenticate(username, password)
+	if err != nil {
+		w.WriteHeader(503)
+		return
+	}
+
+	if !authenticated {
 		set401Response(w)
+		return
 	}
 
 	fmt.Fprintf(w, s.SSHKey)
