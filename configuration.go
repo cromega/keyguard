@@ -7,7 +7,9 @@ import (
 )
 
 type configuration struct {
-	YubiId string
+	YubiApiKey   string
+	SSHKey       string
+	loaderScript string
 }
 
 func configure(r io.Reader) (c configuration, err error) {

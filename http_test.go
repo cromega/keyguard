@@ -23,7 +23,7 @@ func TestRootHandlerServesLoaderScript(t *testing.T) {
 	response := httptest.NewRecorder()
 	request, _ := http.NewRequest("GET", "", nil)
 
-	server := server{LoaderScript: "loader script"}
+	server := server{config: configuration{loaderScript: "loader script"}}
 	server.rootHandler(response, request)
 
 	code := response.Code
@@ -99,7 +99,7 @@ func TestKeysHandlerRespondsWithKey(t *testing.T) {
 
 	request.SetBasicAuth("cromega", "supersecurepassword")
 
-	server := server{SSHKey: "ssh key", authenticator: &dummyAuth{ret: true}}
+	server := server{config: configuration{SSHKey: "ssh key"}, authenticator: &dummyAuth{ret: true}}
 	server.keysHandler(response, request)
 
 	body := response.Body.String()

@@ -9,8 +9,6 @@ var config configuration
 
 type server struct {
 	config        configuration
-	SSHKey        string
-	LoaderScript  string
 	authenticator authenticator
 }
 

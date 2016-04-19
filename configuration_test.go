@@ -6,7 +6,7 @@ import (
 )
 
 func TestConfigureWorks(t *testing.T) {
-	raw := `{"YubiId":"id"}`
+	raw := `{"YubiApiKey":"id"}`
 	reader := strings.NewReader(raw)
 
 	config, err := configure(reader)
@@ -15,8 +15,8 @@ func TestConfigureWorks(t *testing.T) {
 		t.Error("config decode failed")
 	}
 
-	if config.YubiId != "id" {
-		t.Error("config read failed: wrong yubiId: ", config.YubiId)
+	if config.YubiApiKey != "id" {
+		t.Error("config read failed: wrong yubiId: ", config.YubiApiKey)
 	}
 }
 

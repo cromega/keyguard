@@ -6,7 +6,7 @@ import (
 )
 
 func (s *server) rootHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, s.LoaderScript)
+	fmt.Fprintf(w, s.config.loaderScript)
 }
 
 func (s *server) keysHandler(w http.ResponseWriter, r *http.Request) {
@@ -23,7 +23,7 @@ func (s *server) keysHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Fprintf(w, s.SSHKey)
+	fmt.Fprintf(w, s.config.SSHKey)
 }
 
 func set401Response(w http.ResponseWriter) {
