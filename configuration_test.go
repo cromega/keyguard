@@ -30,3 +30,26 @@ func TestConfigureFailsBecauseOfShitJson(t *testing.T) {
 		t.Error("should have failed")
 	}
 }
+
+func TestConfigureValidateFailsIfYubiApiKeyIsMissing(t *testing.T) {
+	config = configuration{}
+
+	valid, err := config.validate()
+	if valid == true || err == nil {
+		t.Error("should have failed")
+	}
+}
+
+func TestConfigureMergeWithDefaults(t *testing.T) {
+	config := configuration{}
+
+	newConfig := mergeWithDefaults(config)
+
+	if newConfig.SSHKey != defaultSSHKey {
+		t.Error("SSHKey should have been set to the default value")
+	}
+
+	if newConfig.loaderScript != defaultLoaderScript {
+		t.Error("loaderScript should have been set to the default value")
+	}
+}
