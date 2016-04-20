@@ -62,3 +62,9 @@ func TestYubiAuthenticatorReturnsFalseIfResponseIsNotOk(t *testing.T) {
 		t.Error("auth should have returned false")
 	}
 }
+
+func TestGetNonceReturnsRandom(t *testing.T) {
+	if getNonce() == getNonce() {
+		t.Error("nonce is not random")
+	}
+}

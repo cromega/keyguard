@@ -35,7 +35,7 @@ func getNonce() (nonce string) {
 	bytes := make([]byte, 16)
 	rand.Read(bytes)
 
-	for b := range bytes {
+	for _, b := range bytes {
 		nonce = nonce + fmt.Sprintf("%02x", b)
 	}
 
