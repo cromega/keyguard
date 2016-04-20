@@ -2,11 +2,19 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
 	"net/http"
+	"os"
 )
 
 func (s *server) rootHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, s.config.loaderScript)
+	data, err := readFile(s.config.loaderScript)
+	if err != nil {
+		set500Response(w)
+		return
+	}
+
+	fmt.Fprintf(w, (data))
 }
 
 func (s *server) keysHandler(w http.ResponseWriter, r *http.Request) {
@@ -23,10 +31,31 @@ func (s *server) keysHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Fprintf(w, s.config.SSHKey)
+	data, err := readFile(s.config.SSHKey)
+	if err != nil {
+		set500Response(w)
+		return
+	}
+
+	fmt.Fprintf(w, (data))
 }
 
 func set401Response(w http.ResponseWriter) {
 	w.Header().Add("Authenticate", "KeyGuard")
 	w.WriteHeader(401)
+}
+
+func set500Response(w http.ResponseWriter) {
+	w.WriteHeader(500)
+}
+
+func readFile(path string) (string, error) {
+	f, err := os.Open(path)
+	if err != nil {
+		return "", err
+	}
+	defer f.Close()
+
+	data, _ := ioutil.ReadAll(f)
+	return string(data), nil
 }

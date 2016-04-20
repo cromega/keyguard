@@ -23,7 +23,7 @@ func TestRootHandlerServesLoaderScript(t *testing.T) {
 	response := httptest.NewRecorder()
 	request, _ := http.NewRequest("GET", "", nil)
 
-	server := server{config: configuration{loaderScript: "loader script"}}
+	server := server{config: configuration{loaderScript: "testdata/loader.sh"}}
 	server.rootHandler(response, request)
 
 	code := response.Code
@@ -32,7 +32,7 @@ func TestRootHandlerServesLoaderScript(t *testing.T) {
 	}
 
 	body := response.Body.String()
-	if response.Body.String() != "loader script" {
+	if response.Body.String() != "awesome loader script" {
 		t.Error("wrong response from / endpoint: ", body)
 	}
 }
@@ -41,7 +41,7 @@ func TestKeysHandlerRequiresAuthentication(t *testing.T) {
 	response := httptest.NewRecorder()
 	request, _ := http.NewRequest("GET", "", nil)
 
-	server := server{authenticator: &dummyAuth{}}
+	server := server{authenticator: &dummyAuth{}, config: configuration{SSHKey: "testdata/id_rsa"}}
 	server.keysHandler(response, request)
 
 	code := response.Code
@@ -61,12 +61,12 @@ func TestKeysHandlerRequiresValidCredentials(t *testing.T) {
 
 	request.SetBasicAuth("cromega", "supersecurepassword")
 
-	server := server{authenticator: &dummyAuth{ret: true}}
+	server := server{authenticator: &dummyAuth{ret: true}, config: configuration{SSHKey: "testdata/id_rsa"}}
 	server.keysHandler(response, request)
 
 	code := response.Code
 	if code != 200 {
-		t.Error("request should have been accepted")
+		t.Error("http status should be 200: ", code)
 	}
 }
 
@@ -99,11 +99,11 @@ func TestKeysHandlerRespondsWithKey(t *testing.T) {
 
 	request.SetBasicAuth("cromega", "supersecurepassword")
 
-	server := server{config: configuration{SSHKey: "ssh key"}, authenticator: &dummyAuth{ret: true}}
+	server := server{config: configuration{SSHKey: "testdata/id_rsa"}, authenticator: &dummyAuth{ret: true}}
 	server.keysHandler(response, request)
 
 	body := response.Body.String()
-	if body != "ssh key" {
+	if body != "awesome private key" {
 		t.Error("server should have responded with the correct ssh key: ", body)
 	}
 }
