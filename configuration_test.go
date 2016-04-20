@@ -20,6 +20,21 @@ func TestConfigureWorks(t *testing.T) {
 	}
 }
 
+func TestConfigureFallsBackToDefaultValues(t *testing.T) {
+	raw := `{"YubiApiKey":"id"}`
+	reader := strings.NewReader(raw)
+
+	config, err := configure(reader)
+
+	if err != nil {
+		t.Error("config decode failed")
+	}
+
+	if config.loaderScript != "loader.sh" {
+		t.Error("default settings should have been merged")
+	}
+}
+
 func TestConfigureFailsBecauseOfShitJson(t *testing.T) {
 	raw := `{yubiId:id}`
 	reader := strings.NewReader(raw)

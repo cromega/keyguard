@@ -29,12 +29,12 @@ func configure(r io.Reader) (c configuration, err error) {
 		return
 	}
 
-	return
+	return mergeWithDefaults(c), nil
 }
 
 func (c *configuration) validate() (bool, error) {
 	if c.YubiApiKey == "" {
-		return false, errors.New("YubiApiKey is missing")
+		return false, errors.New("YubiApiKey is missing from configuration")
 	}
 
 	return true, nil
