@@ -25,5 +25,5 @@ func main() {
 
 	server := server{config: config}
 	http.HandleFunc("/", server.rootHandler)
-	http.HandleFunc("/keys", server.keysHandler)
+	http.HandleFunc("/key", server.keyHandler)
 }

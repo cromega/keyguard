@@ -17,7 +17,7 @@ func (s *server) rootHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, (data))
 }
 
-func (s *server) keysHandler(w http.ResponseWriter, r *http.Request) {
+func (s *server) keyHandler(w http.ResponseWriter, r *http.Request) {
 	username, password, _ := r.BasicAuth()
 
 	authenticated, err := s.authenticator.authenticate(username, password)

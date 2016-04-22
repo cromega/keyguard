@@ -42,7 +42,7 @@ func TestKeysHandlerRequiresAuthentication(t *testing.T) {
 	request, _ := http.NewRequest("GET", "", nil)
 
 	server := server{authenticator: &dummyAuth{}, config: configuration{SSHKey: "testdata/id_rsa"}}
-	server.keysHandler(response, request)
+	server.keyHandler(response, request)
 
 	code := response.Code
 	if code != 401 {
@@ -62,7 +62,7 @@ func TestKeysHandlerRequiresValidCredentials(t *testing.T) {
 	request.SetBasicAuth("cromega", "supersecurepassword")
 
 	server := server{authenticator: &dummyAuth{ret: true}, config: configuration{SSHKey: "testdata/id_rsa"}}
-	server.keysHandler(response, request)
+	server.keyHandler(response, request)
 
 	code := response.Code
 	if code != 200 {
@@ -78,7 +78,7 @@ func TestKeysHandlerAuthenticatesTheRequest(t *testing.T) {
 
 	auth := &dummyAuth{ret: true}
 	server := server{authenticator: auth}
-	server.keysHandler(response, request)
+	server.keyHandler(response, request)
 
 	if auth.called != 1 {
 		t.Error("the authenticator was not called")
@@ -100,7 +100,7 @@ func TestKeysHandlerRespondsWithKey(t *testing.T) {
 	request.SetBasicAuth("cromega", "supersecurepassword")
 
 	server := server{config: configuration{SSHKey: "testdata/id_rsa"}, authenticator: &dummyAuth{ret: true}}
-	server.keysHandler(response, request)
+	server.keyHandler(response, request)
 
 	body := response.Body.String()
 	if body != "awesome private key" {
