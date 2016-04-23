@@ -19,6 +19,11 @@ func main() {
 	}
 
 	auth, err := NewAuthenticator(config.auth)
+
+	if err != nil {
+		panic(err)
+	}
+
 	server := server{config: config, authenticator: auth}
 	http.HandleFunc("/", server.rootHandler)
 	http.HandleFunc("/key", server.keyHandler)
