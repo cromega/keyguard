@@ -2,15 +2,14 @@ package main
 
 import (
 	"encoding/json"
-	"errors"
 	"io"
 	"io/ioutil"
 )
 
 type configuration struct {
-	YubiApiKey   string
 	SSHKey       string
 	loaderScript string
+	auth         map[string]interface{}
 }
 
 const (
@@ -30,14 +29,6 @@ func configure(r io.Reader) (c configuration, err error) {
 	}
 
 	return mergeWithDefaults(c), nil
-}
-
-func (c *configuration) validate() (bool, error) {
-	if c.YubiApiKey == "" {
-		return false, errors.New("YubiApiKey is missing from configuration")
-	}
-
-	return true, nil
 }
 
 func mergeWithDefaults(c configuration) configuration {

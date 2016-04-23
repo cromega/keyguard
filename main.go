@@ -7,11 +7,6 @@ import (
 
 var config configuration
 
-type server struct {
-	config        configuration
-	authenticator authenticator
-}
-
 func main() {
 	file, err := os.Open("config.json")
 	if err != nil {
@@ -23,7 +18,10 @@ func main() {
 		panic(err)
 	}
 
-	server := server{config: config}
+	auth, err := NewAuthenticator(config.auth)
+	server := server{config: config, authenticator: auth}
 	http.HandleFunc("/", server.rootHandler)
 	http.HandleFunc("/key", server.keyHandler)
+
+	http.ListenAndServe(":3456", nil)
 }

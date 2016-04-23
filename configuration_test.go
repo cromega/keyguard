@@ -6,22 +6,7 @@ import (
 )
 
 func TestConfigureWorks(t *testing.T) {
-	raw := `{"YubiApiKey":"id"}`
-	reader := strings.NewReader(raw)
-
-	config, err := configure(reader)
-
-	if err != nil {
-		t.Error("config decode failed")
-	}
-
-	if config.YubiApiKey != "id" {
-		t.Error("config read failed: wrong yubiId: ", config.YubiApiKey)
-	}
-}
-
-func TestConfigureFallsBackToDefaultValues(t *testing.T) {
-	raw := `{"YubiApiKey":"id"}`
+	raw := `{"loaderScript":"loader.sh"}`
 	reader := strings.NewReader(raw)
 
 	config, err := configure(reader)
@@ -31,27 +16,26 @@ func TestConfigureFallsBackToDefaultValues(t *testing.T) {
 	}
 
 	if config.loaderScript != "loader.sh" {
-		t.Error("default settings should have been merged")
+		t.Error("config read failed: wrong yubiId: ", config.loaderScript)
 	}
 }
 
-func TestConfigureFailsBecauseOfShitJson(t *testing.T) {
-	raw := `{yubiId:id}`
+func TestConfigureFallsBackToDefaultValues(t *testing.T) {
+	raw := `{}`
 	reader := strings.NewReader(raw)
 
-	_, err := configure(reader)
+	config, err := configure(reader)
 
-	if err == nil {
-		t.Error("should have failed")
+	if err != nil {
+		t.Error("config decode failed")
 	}
-}
 
-func TestConfigureValidateFailsIfYubiApiKeyIsMissing(t *testing.T) {
-	config = configuration{}
+	if config.loaderScript != defaultLoaderScript {
+		t.Error("default loader script setting should have been merged: ", config.loaderScript)
+	}
 
-	valid, err := config.validate()
-	if valid == true || err == nil {
-		t.Error("should have failed")
+	if config.SSHKey != defaultSSHKey {
+		t.Error("default sshkey setting should have been merged: ", config.SSHKey)
 	}
 }
 

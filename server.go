@@ -7,6 +7,11 @@ import (
 	"os"
 )
 
+type server struct {
+	config        configuration
+	authenticator authenticator
+}
+
 func (s *server) rootHandler(w http.ResponseWriter, r *http.Request) {
 	data, err := readFile(s.config.loaderScript)
 	if err != nil {
