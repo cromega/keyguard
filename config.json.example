@@ -1,0 +1,10 @@
+{
+  "SSHKey": "id_rsa",
+  "loaderScript": "loader.sh",
+  "auth": {
+    "clientId": "12345",
+    "apiKey": "apikey",
+    "preferHttp": false
+  }
+}
+
