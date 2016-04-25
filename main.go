@@ -19,7 +19,7 @@ func main() {
 		panic(err)
 	}
 
-	auth, err := NewAuthenticator(config.auth)
+	auth, err := NewAuthenticator(config.Auth)
 
 	if err != nil {
 		panic(err)

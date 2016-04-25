@@ -13,7 +13,7 @@ type server struct {
 }
 
 func (s *server) rootHandler(w http.ResponseWriter, r *http.Request) {
-	data, err := readFile(s.config.loaderScript)
+	loader, err := readFile(s.config.LoaderScript)
 	if err != nil {
 		set500Response(w)
 		return

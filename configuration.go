@@ -8,8 +8,8 @@ import (
 
 type configuration struct {
 	SSHKey       string
-	loaderScript string
-	auth         map[string]interface{}
+	LoaderScript string
+	Auth         map[string]interface{}
 }
 
 const (
@@ -36,8 +36,8 @@ func mergeWithDefaults(c configuration) configuration {
 		c.SSHKey = defaultSSHKey
 	}
 
-	if c.loaderScript == "" {
-		c.loaderScript = defaultLoaderScript
+	if c.LoaderScript == "" {
+		c.LoaderScript = defaultLoaderScript
 	}
 
 	return c
