@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"text/template"
 )
 
 type server struct {
@@ -19,7 +20,16 @@ func (s *server) rootHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Fprintf(w, (data))
+	tmpl, err := template.New("loader").Parse(loader)
+	if err != nil {
+		set500Response(w)
+		return
+	}
+
+	params := struct {
+		Url string
+	}{"http://localhost:3456/key"}
+	tmpl.Execute(w, params)
 }
 
 func (s *server) keyHandler(w http.ResponseWriter, r *http.Request) {
