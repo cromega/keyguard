@@ -29,5 +29,5 @@ func main() {
 	http.HandleFunc("/", server.rootHandler)
 	http.HandleFunc("/key", server.keyHandler)
 
-	http.ListenAndServe(":3456", nil)
+	http.ListenAndServe(":3459", nil)
 }
