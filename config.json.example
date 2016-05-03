@@ -1,8 +1,8 @@
 {
   "SSHKey": "id_rsa",
-  "loaderScript": "loader.sh",
-  "publicUrl": "https://example.org",
-  "auth": {
+  "LoaderScript": "loader.sh",
+  "PublicUrl": "https://example.org",
+  "Auth": {
     "clientId": "12345",
     "apiKey": "apikey",
     "preferHttp": false
