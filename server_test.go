@@ -23,7 +23,7 @@ func TestRootHandlerServesLoaderScript(t *testing.T) {
 	response := httptest.NewRecorder()
 	request, _ := http.NewRequest("GET", "", nil)
 
-	server := server{config: configuration{loaderScript: "testdata/loader.sh"}}
+	server := server{config: configuration{LoaderScript: "testdata/loader.sh"}}
 	server.rootHandler(response, request)
 
 	code := response.Code

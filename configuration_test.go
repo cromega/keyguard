@@ -15,8 +15,8 @@ func TestConfigureWorks(t *testing.T) {
 		t.Error("config decode failed")
 	}
 
-	if config.loaderScript != "loader.sh" {
-		t.Error("config read failed: wrong yubiId: ", config.loaderScript)
+	if config.LoaderScript != "loader.sh" {
+		t.Error("config read failed: wrong yubiId: ", config.LoaderScript)
 	}
 }
 
@@ -30,8 +30,8 @@ func TestConfigureFallsBackToDefaultValues(t *testing.T) {
 		t.Error("config decode failed")
 	}
 
-	if config.loaderScript != defaultLoaderScript {
-		t.Error("default loader script setting should have been merged: ", config.loaderScript)
+	if config.LoaderScript != defaultLoaderScript {
+		t.Error("default loader script setting should have been merged: ", config.LoaderScript)
 	}
 
 	if config.SSHKey != defaultSSHKey {
@@ -48,7 +48,7 @@ func TestConfigureMergeWithDefaults(t *testing.T) {
 		t.Error("SSHKey should have been set to the default value")
 	}
 
-	if newConfig.loaderScript != defaultLoaderScript {
+	if newConfig.LoaderScript != defaultLoaderScript {
 		t.Error("loaderScript should have been set to the default value")
 	}
 }
