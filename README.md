@@ -38,7 +38,7 @@ $ nohup ./keyguard &
 
 ```
 $ curl -s https://key.yourdomain.org | bash
-OTP: ccccsfrhkrucdedthkkrdkkrbjdhidjkljktflhvjgcl
+OTP: ccccsfrhkrucdedthkkrdkkrbjdhidjkljktflhvjgcl # this is where I pressed the YubiKey button
 Identity added: /tmp/tmp.2GxYjzCLaE (/tmp/tmp.2GxYjzCLaE)
 Lifetime set to 32400 seconds
 ```
