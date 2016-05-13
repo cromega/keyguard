@@ -42,3 +42,11 @@ OTP: ccccsfrhkrucdedthkkrdkkrbjdhidjkljktflhvjgcl # this is where I pressed the 
 Identity added: /tmp/tmp.2GxYjzCLaE (/tmp/tmp.2GxYjzCLaE)
 Lifetime set to 32400 seconds
 ```
+
+## How it works
+
+The service exposes two endpoints:
+* `/`
+* `/keys`
+
+`/` respopnds with a shell script (check `loader.sh` for an example) that makes a second call to `/keys` with the right request parameters. The successful response to the second request is the SSH key. Different authentication mechanisms may need a tailored loader script as well.
