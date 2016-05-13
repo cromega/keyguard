@@ -51,7 +51,7 @@ You have to create an API key at [YubiCo](https://upgrade.yubico.com/getapikey/)
 
 The service exposes two endpoints:
 * `/`
-* `/keys`
+* `/key`
 
 `/` respopnds with a shell script (check `loader.sh` for an example) that makes a second call to `/keys` with the right request parameters. The successful response to the second request is the SSH key. Different authentication mechanisms may need a tailored loader script as well.
 
