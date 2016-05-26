@@ -1,7 +1,12 @@
 echo -n "OTP: "
 read password < /dev/tty
 
-keyfile=$(mktemp)
+mktemp="mktemp"
+if command -v gmktemp; then
+  mktemp="gmktemp"
+fi
+
+keyfile=$($mktemp)
 trap "rm -rf "$keyfile"" EXIT
 
 curl -k -f -s -u "cromega:$password" "{{ .Url }}" > "$keyfile"
