@@ -55,3 +55,21 @@ The service exposes two endpoints:
 
 `/` responds with a shell script (check `loader.sh` for an example) that makes a second call to `/keys` with the right request parameters. The successful response to the second request is the SSH key. Different authentication mechanisms may need a tailored loader script as well.
 
+## Running it on Cloud Foundry
+
+You can actually run KeyGuard on Cloud Foundry!
+
+Build it, put your key and config.json in the folder and `cf push`. Don't forget to configure `PublicUrl` to the correct route beforehand.
+
+You can use an encrypted SSH key if you are scared of pushing your key to a public cloud.
+
+An example app manifest looks something like this:
+
+```yaml
+applications:
+- name: keyguard
+  memory: 32m
+  buildpack: binary_buildpack
+  command: ./keyguard --configPath=config.json
+```
+
