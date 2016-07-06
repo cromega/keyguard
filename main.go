@@ -33,5 +33,10 @@ func main() {
 	http.HandleFunc("/", server.rootHandler)
 	http.HandleFunc("/key", server.keyHandler)
 
-	http.ListenAndServe(":3459", nil)
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "3459"
+	}
+
+	http.ListenAndServe(":"+port, nil)
 }
