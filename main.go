@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"net/http"
 	"os"
 )
@@ -8,7 +9,10 @@ import (
 var config configuration
 
 func main() {
-	file, err := os.Open("config.json")
+	var configPath = flag.String("configPath", "config.json", "path to the config file")
+	flag.Parse()
+
+	file, err := os.Open(*configPath)
 	if err != nil {
 		panic(err)
 	}
