@@ -21,7 +21,7 @@ func (a *dummyAuth) authenticate(username, password string) (bool, error) {
 
 func TestRootHandlerServesLoaderScript(t *testing.T) {
 	response := httptest.NewRecorder()
-	request, _ := http.NewRequest("GET", "", nil)
+	request, _ := http.NewRequest("GET", "/", nil)
 
 	server := server{config: configuration{LoaderScript: "testdata/loader.sh"}}
 	server.rootHandler(response, request)
@@ -39,7 +39,7 @@ func TestRootHandlerServesLoaderScript(t *testing.T) {
 
 func TestKeysHandlerRequiresAuthentication(t *testing.T) {
 	response := httptest.NewRecorder()
-	request, _ := http.NewRequest("GET", "", nil)
+	request, _ := http.NewRequest("GET", "/key", nil)
 
 	server := server{authenticator: &dummyAuth{}, config: configuration{SSHKey: "testdata/id_rsa"}}
 	server.keyHandler(response, request)
@@ -57,7 +57,7 @@ func TestKeysHandlerRequiresAuthentication(t *testing.T) {
 
 func TestKeysHandlerRequiresValidCredentials(t *testing.T) {
 	response := httptest.NewRecorder()
-	request, _ := http.NewRequest("GET", "", nil)
+	request, _ := http.NewRequest("GET", "/key", nil)
 
 	request.SetBasicAuth("cromega", "supersecurepassword")
 
@@ -72,7 +72,7 @@ func TestKeysHandlerRequiresValidCredentials(t *testing.T) {
 
 func TestKeysHandlerAuthenticatesTheRequest(t *testing.T) {
 	response := httptest.NewRecorder()
-	request, _ := http.NewRequest("GET", "", nil)
+	request, _ := http.NewRequest("GET", "/key", nil)
 
 	request.SetBasicAuth("cromega", "supersecurepassword")
 
@@ -95,7 +95,7 @@ func TestKeysHandlerAuthenticatesTheRequest(t *testing.T) {
 
 func TestKeysHandlerRespondsWithKey(t *testing.T) {
 	response := httptest.NewRecorder()
-	request, _ := http.NewRequest("GET", "", nil)
+	request, _ := http.NewRequest("GET", "/key", nil)
 
 	request.SetBasicAuth("cromega", "supersecurepassword")
 
