@@ -9,7 +9,7 @@ fi
 keyfile=$($mktemp)
 trap "rm -rf $keyfile" EXIT
 
-curl -k -f -s -u "cromega:$password" "{{ .Url }}" > "$keyfile"
+curl -f -s -u "cromega:$password" "{{ .URL }}" > "$keyfile"
 if [ $? ]; then
   ssh-add -t 32400 "$keyfile"
 else

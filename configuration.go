@@ -9,7 +9,7 @@ import (
 type configuration struct {
 	SSHKey       string
 	LoaderScript string
-	PublicUrl    string
+	PublicURL    string
 	Auth         map[string]interface{}
 }
 

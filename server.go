@@ -26,10 +26,10 @@ func (s *server) rootHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	keyUrl := fmt.Sprintf("%s/key", config.PublicUrl)
+	keyURL := fmt.Sprintf("%s/key", config.PublicURL)
 	params := struct {
-		Url string
-	}{keyUrl}
+		URL string
+	}{keyURL}
 	tmpl.Execute(w, params)
 }
 
