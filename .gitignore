@@ -24,6 +24,4 @@ _testmain.go
 *.prof
 
 keyguard
-id_rsa
-id_rsa.pub
 config.json
