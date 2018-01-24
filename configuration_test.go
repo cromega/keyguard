@@ -37,6 +37,10 @@ func TestConfigureFallsBackToDefaultValues(t *testing.T) {
 	if config.SSHKey != defaultSSHKey {
 		t.Error("default sshkey setting should have been merged: ", config.SSHKey)
 	}
+
+	if config.SSHPubKey != defaultSSHPubKey {
+		t.Error("default ssh public key setting should have been merged: ", config.SSHPubKey)
+	}
 }
 
 func TestConfigureMergeWithDefaults(t *testing.T) {
@@ -46,6 +50,10 @@ func TestConfigureMergeWithDefaults(t *testing.T) {
 
 	if newConfig.SSHKey != defaultSSHKey {
 		t.Error("SSHKey should have been set to the default value")
+	}
+
+	if newConfig.SSHPubKey != defaultSSHPubKey {
+		t.Error("SSHPubKey should have been set to the default value")
 	}
 
 	if newConfig.LoaderScript != defaultLoaderScript {

@@ -8,6 +8,7 @@ import (
 
 type configuration struct {
 	SSHKey       string
+	SSHPubKey    string
 	LoaderScript string
 	PublicURL    string
 	Auth         map[string]interface{}
@@ -16,6 +17,7 @@ type configuration struct {
 const (
 	defaultSSHKey       = "id_rsa"
 	defaultLoaderScript = "loader.sh"
+	defaultSSHPubKey    = "id_rsa.pub"
 )
 
 func configure(r io.Reader) (c configuration, err error) {
@@ -35,6 +37,10 @@ func configure(r io.Reader) (c configuration, err error) {
 func mergeWithDefaults(c configuration) configuration {
 	if c.SSHKey == "" {
 		c.SSHKey = defaultSSHKey
+	}
+
+	if c.SSHPubKey == "" {
+		c.SSHPubKey = defaultSSHPubKey
 	}
 
 	if c.LoaderScript == "" {

@@ -56,6 +56,16 @@ func (s *server) keyHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, (data))
 }
 
+func (s *server) pubKeyHandler(w http.ResponseWriter, r *http.Request) {
+	data, err := readFile(s.config.SSHPubKey)
+	if err != nil {
+		set500Response(w)
+		return
+	}
+
+	fmt.Fprintf(w, (data))
+}
+
 func set401Response(w http.ResponseWriter) {
 	w.Header().Add("Authenticate", "KeyGuard")
 	w.WriteHeader(401)

@@ -32,6 +32,7 @@ func main() {
 	server := server{config: config, authenticator: auth}
 	http.HandleFunc("/", server.rootHandler)
 	http.HandleFunc("/key", server.keyHandler)
+	http.HandleFunc("/pubkey", server.pubKeyHandler)
 
 	port := os.Getenv("PORT")
 	if port == "" {

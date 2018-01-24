@@ -28,12 +28,12 @@ func TestRootHandlerServesLoaderScript(t *testing.T) {
 
 	code := response.Code
 	if code != 200 {
-		t.Error("response code was not 200: ", code)
+		t.Error("response code was not 200:", code)
 	}
 
 	body := response.Body.String()
-	if response.Body.String() != "awesome loader script" {
-		t.Error("wrong response from / endpoint: ", body)
+	if body != "awesome loader script" {
+		t.Error("wrong response from / endpoint:", body)
 	}
 }
 
@@ -46,12 +46,12 @@ func TestKeysHandlerRequiresAuthentication(t *testing.T) {
 
 	code := response.Code
 	if code != 401 {
-		t.Error("request should have been rejected with 401: ", code)
+		t.Error("request should have been rejected with 401:", code)
 	}
 
 	header := response.Header().Get("Authenticate")
 	if header != "KeyGuard" {
-		t.Error("correct authenticate header was not in response: ", header)
+		t.Error("correct authenticate header was not in response:", header)
 	}
 }
 
@@ -66,7 +66,7 @@ func TestKeysHandlerRequiresValidCredentials(t *testing.T) {
 
 	code := response.Code
 	if code != 200 {
-		t.Error("http status should be 200: ", code)
+		t.Error("http status should be 200:", code)
 	}
 }
 
@@ -85,11 +85,11 @@ func TestKeysHandlerAuthenticatesTheRequest(t *testing.T) {
 	}
 
 	if auth.usernameSent != "cromega" {
-		t.Error("sent the wrong username to the authenticator: ", auth.usernameSent)
+		t.Error("sent the wrong username to the authenticator:", auth.usernameSent)
 	}
 
 	if auth.passwordSent != "supersecurepassword" {
-		t.Error("sent the wrong password to the authenticator: ", auth.passwordSent)
+		t.Error("sent the wrong password to the authenticator:", auth.passwordSent)
 	}
 }
 
@@ -104,6 +104,23 @@ func TestKeysHandlerRespondsWithKey(t *testing.T) {
 
 	body := response.Body.String()
 	if body != "awesome private key" {
-		t.Error("server should have responded with the correct ssh key: ", body)
+		t.Error("server should have responded with the correct ssh key:", body)
+	}
+}
+
+func TestPublicKeyHandlerSendsPublicKey(t *testing.T) {
+	response := httptest.NewRecorder()
+	request, _ := http.NewRequest("GET", "/pubkey", nil)
+
+	server := server{config: configuration{SSHPubKey: "testdata/id_rsa.pub"}}
+	server.pubKeyHandler(response, request)
+
+	if response.Code != 200 {
+		t.Error("response should be OK", response.Code)
+	}
+
+	body := response.Body.String()
+	if body != "awesome public key" {
+		t.Error("server should have responded with a public key:", body)
 	}
 }

@@ -12,6 +12,7 @@ Only [YubiKey](https://www.yubico.com/why-yubico/for-individuals/) One-time pass
 $ cat config.json
 {
   "SSHKey": "id_rsa", # path to private key
+  "SSHPubKey": "id_rsa.pub", # path to public key
   "LoaderScript": "loader.sh", # path to the loader script
   "PublicUrl": "https://key.yourdomain.org", # public URL where the /key endpoint can be queried
   "Auth": {
@@ -43,17 +44,27 @@ Identity added: /tmp/tmp.2GxYjzCLaE (/tmp/tmp.2GxYjzCLaE)
 Lifetime set to 32400 seconds
 ```
 
+#### Retrieve the public key
+Sometimes it's rather handy to get the public key when you want to add it to certain services such as GitHub.
+
+```
+curl -s https://key.yourdomain.org/pubkey
+```
+
 ### Important
 
 You have to create an API key at [YubiCo](https://upgrade.yubico.com/getapikey/) to use the authenticator.
 
 ## How it works
 
-The service exposes two endpoints:
+The service exposes three endpoints:
 * `/`
 * `/key`
+* `/pubkey`
 
 `/` responds with a shell script (check `loader.sh` for an example) that makes a second call to `/keys` with the right request parameters. The successful response to the second request is the SSH key. Different authentication mechanisms may need a tailored loader script as well.
+
+`/pubkey` just responds with the public key without authentication.
 
 ## Running it on Cloud Foundry
 
