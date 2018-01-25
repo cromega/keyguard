@@ -51,6 +51,14 @@ Sometimes it's rather handy to get the public key when you want to add it to cer
 curl -s https://key.yourdomain.org/pubkey
 ```
 
+Configuration options:
+
+```
+Usage of ./keyguard:
+  -configPath string
+        path to the config file (default "config.json")
+```
+
 ### Important
 
 You have to create an API key at [YubiCo](https://upgrade.yubico.com/getapikey/) to use the authenticator.
