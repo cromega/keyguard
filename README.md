@@ -23,12 +23,6 @@ $ cat config.json
 }
 ```
 
-### 2. Build
-
-```
-$ go build
-```
-
 ### 3. Run
 
 ```
@@ -62,6 +56,12 @@ Usage of ./keyguard:
 ### Important
 
 You have to create an API key at [YubiCo](https://upgrade.yubico.com/getapikey/) to use the authenticator.
+
+## Building
+
+```
+$ go build
+```
 
 ## How it works
 
