@@ -77,7 +77,7 @@ func TestKeysHandlerAuthenticatesTheRequest(t *testing.T) {
 	request.SetBasicAuth("keyguard", "supersecurepassword")
 
 	auth := &dummyAuth{ret: true}
-	server := server{authenticator: auth}
+	server := server{authenticator: auth, config: configuration{SSHKey: "testdata/id_rsa"}}
 	server.keyHandler(response, request)
 
 	if auth.called != 1 {
@@ -90,6 +90,10 @@ func TestKeysHandlerAuthenticatesTheRequest(t *testing.T) {
 
 	if auth.passwordSent != "supersecurepassword" {
 		t.Error("sent the wrong password to the authenticator:", auth.passwordSent)
+	}
+
+	if response.Code != 200 {
+		t.Error("wrong respnse code:", response.Code)
 	}
 }
 
