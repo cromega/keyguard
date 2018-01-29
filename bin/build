@@ -2,4 +2,5 @@
 
 go test
 
+docker rmi cromega/keyguard:latest
 docker build -t cromega/keyguard .
