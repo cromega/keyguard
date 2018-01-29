@@ -1,6 +1,5 @@
 {
   "SSHKey": "/app/keys/id_rsa",
-  "SSHPubKey": "/app/keys/id_rsa.pub",
   "LoaderScript": "/app/loader.sh",
   "PublicUrl": "https://example.org",
   "Auth": {

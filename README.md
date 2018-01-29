@@ -12,7 +12,6 @@ Only [YubiKey](https://www.yubico.com/why-yubico/for-individuals/) One-time pass
 $ cat config.json
 {
   "SSHKey": "id_rsa", # path to private key
-  "SSHPubKey": "id_rsa.pub", # path to public key
   "LoaderScript": "loader.sh", # path to the loader script
   "PublicUrl": "https://key.yourdomain.org", # public URL where the /key endpoint can be queried
   "Auth": {

@@ -112,7 +112,7 @@ func TestPublicKeyHandlerSendsPublicKey(t *testing.T) {
 	response := httptest.NewRecorder()
 	request, _ := http.NewRequest("GET", "/pubkey", nil)
 
-	server := server{config: configuration{SSHPubKey: "testdata/id_rsa.pub"}}
+	server := server{config: configuration{SSHKey: "testdata/real_id_rsa"}}
 	server.pubKeyHandler(response, request)
 
 	if response.Code != 200 {
@@ -120,7 +120,7 @@ func TestPublicKeyHandlerSendsPublicKey(t *testing.T) {
 	}
 
 	body := response.Body.String()
-	if body != "awesome public key" {
+	if body != "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAAgQDBgps60FUrGlCFlH48/cSWaDuZYfCTvgRIZt60CiQ1fPj53SQ6xpcDpSCpt1pJt/Q1xZtHPaNZ+HWKAU3tOgspi/AJdrQAPC54CLzdBsMlL/+JxjMxtCf0bbG8dxoRijxIppXVyIuCLabA2oEhepf3U/H+Dvm3XST22f87FsQVrw==\n" {
 		t.Error("server should have responded with a public key:", body)
 	}
 }

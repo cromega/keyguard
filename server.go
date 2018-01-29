@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"os/exec"
 	"text/template"
 )
 
@@ -57,13 +58,15 @@ func (s *server) keyHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *server) pubKeyHandler(w http.ResponseWriter, r *http.Request) {
-	data, err := readFile(s.config.SSHPubKey)
+	cmd := exec.Command("ssh-keygen", "-y", "-f", s.config.SSHKey)
+	pubkey, err := cmd.Output()
+
 	if err != nil {
 		set500Response(w)
 		return
 	}
 
-	fmt.Fprintf(w, (data))
+	fmt.Fprintf(w, string(pubkey))
 }
 
 func set401Response(w http.ResponseWriter) {
