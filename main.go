@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	logger "log"
 	"net/http"
 	"os"
 )
@@ -40,4 +41,8 @@ func main() {
 	}
 
 	http.ListenAndServe(":"+port, nil)
+}
+
+func log(message interface{}) {
+	logger.Println(message)
 }

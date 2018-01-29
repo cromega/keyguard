@@ -17,6 +17,7 @@ type server struct {
 func (s *server) rootHandler(w http.ResponseWriter, r *http.Request) {
 	loader, err := readFile(s.config.LoaderScript)
 	if err != nil {
+		log(err)
 		set500Response(w)
 		return
 	}
@@ -50,6 +51,7 @@ func (s *server) keyHandler(w http.ResponseWriter, r *http.Request) {
 
 	data, err := readFile(s.config.SSHKey)
 	if err != nil {
+		log(err)
 		set500Response(w)
 		return
 	}
@@ -62,6 +64,11 @@ func (s *server) pubKeyHandler(w http.ResponseWriter, r *http.Request) {
 	pubkey, err := cmd.Output()
 
 	if err != nil {
+		if e, ok := err.(*exec.ExitError); ok {
+			log(string(e.Stderr))
+		} else {
+			log(e)
+		}
 		set500Response(w)
 		return
 	}
