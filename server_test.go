@@ -74,7 +74,7 @@ func TestKeysHandlerAuthenticatesTheRequest(t *testing.T) {
 	response := httptest.NewRecorder()
 	request, _ := http.NewRequest("GET", "/key", nil)
 
-	request.SetBasicAuth("cromega", "supersecurepassword")
+	request.SetBasicAuth("keyguard", "supersecurepassword")
 
 	auth := &dummyAuth{ret: true}
 	server := server{authenticator: auth}
@@ -84,7 +84,7 @@ func TestKeysHandlerAuthenticatesTheRequest(t *testing.T) {
 		t.Error("the authenticator was not called")
 	}
 
-	if auth.usernameSent != "cromega" {
+	if auth.usernameSent != "keyguard" {
 		t.Error("sent the wrong username to the authenticator:", auth.usernameSent)
 	}
 
