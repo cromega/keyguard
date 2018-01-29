@@ -1,3 +1,5 @@
 #!/bin/bash -e
 
+go test
+
 docker build -t cromega/keyguard .
