@@ -9,7 +9,7 @@ fi
 keyfile=$($mktemp)
 trap "rm -rf $keyfile" EXIT
 
-curl -f -s -u "keyguard:$password" "{{ .URL }}" > "$keyfile"
+curl -k -f -s -u "keyguard:$password" "{{ .URL }}" > "$keyfile"
 if [ $? ]; then
   ssh-add -t 32400 "$keyfile"
 else
