@@ -6,8 +6,11 @@ RUN go build
 
 
 FROM alpine
+
 COPY --from=builder /src/github.com/cromega/keyguard/keyguard /app/
 COPY loader.sh /app/
+
+RUN apk update && apk add openssh-keygen
 
 ENV PORT 8000
 EXPOSE 8000
