@@ -2,5 +2,8 @@
 
 go test
 
-docker rmi cromega/keyguard:latest
+if docker images | grep -q cromega/keyguard > /dev/null; then
+  docker rmi cromega/keyguard:latest
+fi
+
 docker build -t cromega/keyguard .
