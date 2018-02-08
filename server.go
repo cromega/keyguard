@@ -18,13 +18,13 @@ func (s *server) rootHandler(w http.ResponseWriter, r *http.Request) {
 	loader, err := readFile(s.config.LoaderScript)
 	if err != nil {
 		log(err)
-		set500Response(w)
+		setErrorResponse(500, w)
 		return
 	}
 
 	tmpl, err := template.New("loader").Parse(loader)
 	if err != nil {
-		set500Response(w)
+		setErrorResponse(500, w)
 		return
 	}
 
@@ -40,7 +40,7 @@ func (s *server) keyHandler(w http.ResponseWriter, r *http.Request) {
 
 	authenticated, err := s.authenticator.authenticate(username, password)
 	if err != nil {
-		w.WriteHeader(503)
+		setErrorResponse(503, w)
 		return
 	}
 
@@ -52,7 +52,7 @@ func (s *server) keyHandler(w http.ResponseWriter, r *http.Request) {
 	data, err := readFile(s.config.SSHKey)
 	if err != nil {
 		log(err)
-		set500Response(w)
+		setErrorResponse(500, w)
 		return
 	}
 
@@ -69,7 +69,7 @@ func (s *server) pubKeyHandler(w http.ResponseWriter, r *http.Request) {
 		} else {
 			log(e)
 		}
-		set500Response(w)
+		setErrorResponse(500, w)
 		return
 	}
 
@@ -81,8 +81,8 @@ func set401Response(w http.ResponseWriter) {
 	w.WriteHeader(401)
 }
 
-func set500Response(w http.ResponseWriter) {
-	w.WriteHeader(500)
+func setErrorResponse(code int, w http.ResponseWriter) {
+	w.WriteHeader(code)
 }
 
 func readFile(path string) (string, error) {
