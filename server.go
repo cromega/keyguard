@@ -24,6 +24,7 @@ func (s *server) rootHandler(w http.ResponseWriter, r *http.Request) {
 
 	tmpl, err := template.New("loader").Parse(loader)
 	if err != nil {
+		log(err)
 		setErrorResponse(500, w)
 		return
 	}
@@ -40,6 +41,7 @@ func (s *server) keyHandler(w http.ResponseWriter, r *http.Request) {
 
 	authenticated, err := s.authenticator.authenticate(username, password)
 	if err != nil {
+		log(err)
 		setErrorResponse(503, w)
 		return
 	}
