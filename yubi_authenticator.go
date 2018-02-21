@@ -2,7 +2,6 @@ package main
 
 import (
 	"errors"
-	"fmt"
 	"github.com/GeertJohan/yubigo"
 )
 
@@ -46,12 +45,7 @@ func NewAuthenticator(config map[string]interface{}) (*yubiAuth, error) {
 	return &auth, nil
 }
 
-func (a *yubiAuth) authenticate(_, password string) (bool, error) {
-	_, ok, err := a.authenticator.Verify(password)
-	if !ok || err != nil {
-		fmt.Println(err)
-		return false, err
-	}
-
-	return true, nil
+func (a *yubiAuth) authenticate(_, password string) (ok bool, err error) {
+	_, ok, err = a.authenticator.Verify(password)
+	return
 }
