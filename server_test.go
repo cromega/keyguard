@@ -32,7 +32,25 @@ func TestRootHandlerServesLoaderScript(t *testing.T) {
 	}
 
 	body := response.Body.String()
-	if body != "awesome loader script" {
+	if body != "awesome loader script 32400" {
+		t.Error("wrong response from / endpoint:", body)
+	}
+}
+
+func TestRootHandlerServesLoaderScriptWithExpiry(t *testing.T) {
+	response := httptest.NewRecorder()
+	request, _ := http.NewRequest("GET", "/3", nil)
+
+	server := server{config: configuration{LoaderScript: "testdata/loader.sh"}}
+	server.rootHandler(response, request)
+
+	code := response.Code
+	if code != 200 {
+		t.Error("response code was not 200:", code)
+	}
+
+	body := response.Body.String()
+	if body != "awesome loader script 10800" {
 		t.Error("wrong response from / endpoint:", body)
 	}
 }

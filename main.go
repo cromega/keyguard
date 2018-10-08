@@ -5,6 +5,8 @@ import (
 	logger "log"
 	"net/http"
 	"os"
+
+	"github.com/julienschmidt/httprouter"
 )
 
 var config configuration
@@ -31,16 +33,17 @@ func main() {
 	}
 
 	server := server{config: config, authenticator: auth}
-	http.HandleFunc("/", server.rootHandler)
-	http.HandleFunc("/key", server.keyHandler)
-	http.HandleFunc("/pubkey", server.pubKeyHandler)
+	router := httprouter.New()
+	router.GET("/", server.rootHandler)
+	router.GET("/key", server.keyHandler)
+	router.GET("/pubkey", server.pubKeyHandler)
 
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "3459"
 	}
 
-	http.ListenAndServe(":"+port, nil)
+	http.ListenAndServe(":"+port, router)
 }
 
 func log(message interface{}) {
