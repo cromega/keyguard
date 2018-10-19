@@ -1,0 +1,4 @@
+#!/bin/bash -e
+
+chmod 600 testdata/real_id_rsa
+go test -v
