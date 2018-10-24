@@ -1,13 +1,13 @@
 FROM golang:alpine AS builder
-ADD . /src/github.com/cromega/keyguard
-ENV GOPATH /
-WORKDIR /src/github.com/cromega/keyguard
-RUN go build
+ADD . /build
+ENV CGO_ENABLED=0
+WORKDIR /build
+RUN go version && go build -mod=vendor
 
 
 FROM alpine
 
-COPY --from=builder /src/github.com/cromega/keyguard/keyguard /app/
+COPY --from=builder /build/keyguard /app/
 COPY loader.sh /app/
 
 RUN apk update && apk add openssh-keygen ca-certificates
