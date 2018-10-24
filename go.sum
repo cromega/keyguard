@@ -1,2 +1,4 @@
+github.com/AndrewBurian/powermux v0.0.0-00000000000000-593c0f2b2e9f99b4aa366ebaa44323169458724d h1:pFGwv++jI0bYEu00ffSMj3OrCVHl/6lquPLVAeoJs+c=
+github.com/AndrewBurian/powermux v0.0.0-00000000000000-593c0f2b2e9f99b4aa366ebaa44323169458724d/go.mod h1:DP40Ot1oOW0NhDC3qACRalhOSLjMx+ZolGBnoBje8LU=
 github.com/GeertJohan/yubigo v0.0.0-20140521141543-b1764f04aa9b h1:SDBD2Avdba3sXg0F0xKeGZXz8+HODPl35jCSdZdFE9I=
 github.com/GeertJohan/yubigo v0.0.0-20140521141543-b1764f04aa9b/go.mod h1:njRCDrl+1RQ/A/+KVU8Ho2EWAxUSkohOWczdW3dzDG0=

@@ -3,6 +3,7 @@ package main
 import (
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 )
 
@@ -19,30 +20,60 @@ func (a *dummyAuth) authenticate(username, password string) (bool, error) {
 	return a.ret, nil
 }
 
-func TestRootHandlerServesLoaderScript(t *testing.T) {
-	response := httptest.NewRecorder()
+func TestRootHandlerServesLoaderScriptWithDefaultExpiry(t *testing.T) {
 	request, _ := http.NewRequest("GET", "/", nil)
+	response := httptest.NewRecorder()
 
-	server := server{config: configuration{LoaderScript: "testdata/loader.sh"}}
-	server.rootHandler(response, request)
+	server := newServer(
+		configuration{LoaderScript: "testdata/loader.sh"},
+		nil,
+	)
+	server.routes()
+	server.ServeHTTP(response, request)
 
 	code := response.Code
 	if code != 200 {
 		t.Error("response code was not 200:", code)
 	}
 
-	body := response.Body.String()
-	if body != "awesome loader script" {
-		t.Error("wrong response from / endpoint:", body)
+	body := strings.TrimSpace(response.Body.String())
+	if body != "awesome loader script 32400" {
+		t.Error("wrong response from /:", body)
+	}
+}
+
+func TestRootHandlerServesLoaderScriptWithExpiry(t *testing.T) {
+	request, _ := http.NewRequest("GET", "/3", nil)
+	response := httptest.NewRecorder()
+
+	server := newServer(
+		configuration{LoaderScript: "testdata/loader.sh"},
+		nil,
+	)
+	server.routes()
+	server.ServeHTTP(response, request)
+
+	code := response.Code
+	if code != 200 {
+		t.Error("response code was not 200:", code)
+	}
+
+	body := strings.TrimSpace(response.Body.String())
+	if body != "awesome loader script 10800" {
+		t.Error("wrong response from /:", body)
 	}
 }
 
 func TestKeysHandlerRequiresAuthentication(t *testing.T) {
-	response := httptest.NewRecorder()
 	request, _ := http.NewRequest("GET", "/key", nil)
+	response := httptest.NewRecorder()
 
-	server := server{authenticator: &dummyAuth{}, config: configuration{SSHKey: "testdata/id_rsa"}}
-	server.keyHandler(response, request)
+	server := newServer(
+		configuration{SSHKey: "testdata/id_rsa"},
+		&dummyAuth{},
+	)
+	server.routes()
+	server.ServeHTTP(response, request)
 
 	code := response.Code
 	if code != 401 {
@@ -56,13 +87,17 @@ func TestKeysHandlerRequiresAuthentication(t *testing.T) {
 }
 
 func TestKeysHandlerRequiresValidCredentials(t *testing.T) {
-	response := httptest.NewRecorder()
 	request, _ := http.NewRequest("GET", "/key", nil)
+	response := httptest.NewRecorder()
 
 	request.SetBasicAuth("cromega", "supersecurepassword")
 
-	server := server{authenticator: &dummyAuth{ret: true}, config: configuration{SSHKey: "testdata/id_rsa"}}
-	server.keyHandler(response, request)
+	server := newServer(
+		configuration{SSHKey: "testdata/id_rsa"},
+		&dummyAuth{ret: true},
+	)
+	server.routes()
+	server.ServeHTTP(response, request)
 
 	code := response.Code
 	if code != 200 {
@@ -71,14 +106,17 @@ func TestKeysHandlerRequiresValidCredentials(t *testing.T) {
 }
 
 func TestKeysHandlerAuthenticatesTheRequest(t *testing.T) {
-	response := httptest.NewRecorder()
 	request, _ := http.NewRequest("GET", "/key", nil)
-
 	request.SetBasicAuth("keyguard", "supersecurepassword")
+	response := httptest.NewRecorder()
 
 	auth := &dummyAuth{ret: true}
-	server := server{authenticator: auth, config: configuration{SSHKey: "testdata/id_rsa"}}
-	server.keyHandler(response, request)
+	server := newServer(
+		configuration{SSHKey: "testdata/id_rsa"},
+		auth,
+	)
+	server.routes()
+	server.ServeHTTP(response, request)
 
 	if auth.called != 1 {
 		t.Error("the authenticator was not called")
@@ -98,13 +136,17 @@ func TestKeysHandlerAuthenticatesTheRequest(t *testing.T) {
 }
 
 func TestKeysHandlerRespondsWithKey(t *testing.T) {
-	response := httptest.NewRecorder()
 	request, _ := http.NewRequest("GET", "/key", nil)
-
 	request.SetBasicAuth("cromega", "supersecurepassword")
+	response := httptest.NewRecorder()
 
-	server := server{config: configuration{SSHKey: "testdata/id_rsa"}, authenticator: &dummyAuth{ret: true}}
-	server.keyHandler(response, request)
+	auth := &dummyAuth{ret: true}
+	server := newServer(
+		configuration{SSHKey: "testdata/id_rsa"},
+		auth,
+	)
+	server.routes()
+	server.ServeHTTP(response, request)
 
 	body := response.Body.String()
 	if body != "awesome private key" {
@@ -113,11 +155,15 @@ func TestKeysHandlerRespondsWithKey(t *testing.T) {
 }
 
 func TestPublicKeyHandlerSendsPublicKey(t *testing.T) {
-	response := httptest.NewRecorder()
 	request, _ := http.NewRequest("GET", "/pubkey", nil)
+	response := httptest.NewRecorder()
 
-	server := server{config: configuration{SSHKey: "testdata/real_id_rsa"}}
-	server.pubKeyHandler(response, request)
+	server := newServer(
+		configuration{SSHKey: "testdata/real_id_rsa"},
+		nil,
+	)
+	server.routes()
+	server.ServeHTTP(response, request)
 
 	if response.Code != 200 {
 		t.Error("response should be OK", response.Code)

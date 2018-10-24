@@ -1,6 +1,7 @@
 # KeyGuard
 
-A little app to serve SSH keys over an authenticated endpoint. A helper script is used to add the key to the SSH agent with an expiry
+A little app to serve SSH keys over an authenticated endpoint. A helper script
+is used to add the key to the SSH agent with an expiry
 
 Only [YubiKey](https://www.yubico.com/why-yubico/for-individuals/) One-time password auth at the moment.
 
@@ -38,7 +39,8 @@ Lifetime set to 32400 seconds
 ```
 
 #### Retrieve the public key
-Sometimes it's rather handy to get the public key when you want to add it to certain services such as GitHub.
+Sometimes it's rather handy to get the public key when you want to add it to
+certain services such as GitHub.
 
 ```
 curl -s https://key.yourdomain.org/pubkey
@@ -54,7 +56,8 @@ Usage of ./keyguard:
 
 ### Important
 
-You have to create an API key at [YubiCo](https://upgrade.yubico.com/getapikey/) to use the authenticator.
+You have to create an API key at [YubiCo](https://upgrade.yubico.com/getapikey/)
+to use the authenticator.
 
 ## Building
 
@@ -65,11 +68,17 @@ $ go build
 ## How it works
 
 The service exposes three endpoints:
-* `/`
+* `/:expiry`
 * `/key`
 * `/pubkey`
 
-`/` responds with a shell script (check `loader.sh` for an example) that makes a second call to `/keys` with the right request parameters. The successful response to the second request is the SSH key. Different authentication mechanisms may need a tailored loader script as well.
+`/` responds with a shell script (check `loader.sh` for an example) that makes a
+second call to `/keys` with the right request parameters. The successful
+response to the second request is the SSH key. Different authentication
+mechanisms may need a tailored loader script as well.
+
+Epiry in hours can be specified with a single integer parameter to the route.
+eg: `/3`
 
 `/pubkey` just responds with the public key without authentication.
 
@@ -77,7 +86,8 @@ The service exposes three endpoints:
 
 You can actually run KeyGuard on Cloud Foundry!
 
-Build it, put your key and config.json in the folder and `cf push`. Don't forget to configure `PublicUrl` to the correct route beforehand.
+Build it, put your key and config.json in the folder and `cf push`. Don't forget
+to configure `PublicUrl` to the correct route beforehand.
 
 You can use an encrypted SSH key if you are scared of pushing your key to a public cloud.
 

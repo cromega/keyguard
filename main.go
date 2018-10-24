@@ -30,17 +30,15 @@ func main() {
 		panic(err)
 	}
 
-	server := server{config: config, authenticator: auth}
-	http.HandleFunc("/", server.rootHandler)
-	http.HandleFunc("/key", server.keyHandler)
-	http.HandleFunc("/pubkey", server.pubKeyHandler)
+	server := newServer(config, auth)
+	server.routes()
 
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "3459"
 	}
 
-	http.ListenAndServe(":"+port, nil)
+	http.ListenAndServe(":"+port, server.router)
 }
 
 func log(message interface{}) {

@@ -11,7 +11,7 @@ trap "rm -rf $keyfile" EXIT
 
 curl -k -f -s -u "keyguard:$password" "{{ .URL }}" > "$keyfile"
 if [ $? ]; then
-  ssh-add -t 32400 "$keyfile"
+  ssh-add -t {{ .Expiry }} "$keyfile"
 else
   echo "something went wrong."
 fi

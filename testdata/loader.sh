@@ -1,1 +1,1 @@
-awesome loader script
+awesome loader script {{ .Expiry }}

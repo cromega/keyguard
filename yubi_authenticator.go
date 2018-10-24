@@ -13,7 +13,7 @@ const (
 	defaultApiEndpoint = "api.yubico.com/wsapi/2.0/verify"
 )
 
-func NewAuthenticator(config map[string]interface{}) (*yubiAuth, error) {
+func NewAuthenticator(config map[string]interface{}) (authenticator, error) {
 	raw := config["clientId"]
 	clientId, ok := raw.(string)
 	if !ok || clientId == "" {
@@ -26,7 +26,7 @@ func NewAuthenticator(config map[string]interface{}) (*yubiAuth, error) {
 		return nil, errors.New("missing clientId from auth config")
 	}
 
-	yubi, err := yubigo.NewYubiAuthDebug(clientId, apiKey, true)
+	yubi, err := yubigo.NewYubiAuth(clientId, apiKey)
 	if err != nil {
 		return nil, err
 	}

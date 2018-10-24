@@ -1,0 +1,15 @@
+language: go
+go:
+  - 1.8
+branches:
+  only:
+  - master
+before_install:
+  - go get golang.org/x/tools/cmd/cover
+script:
+  - go test -coverprofile=coverage.txt
+  - go test -benchmem -bench .
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
+notifications:
+  email: false

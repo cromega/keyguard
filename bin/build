@@ -3,7 +3,7 @@
 go test
 
 if docker images | grep -q cromega/keyguard > /dev/null; then
-  docker rmi cromega/keyguard:latest
+  docker rmi cromega/keyguard:latest || true
 fi
 
 docker build -t cromega/keyguard .
