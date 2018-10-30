@@ -26,7 +26,7 @@ $ cat config.json
 ### 3. Run
 
 ```
-docker run -p 8000:8000 -v config.json:/app/config.json -v keys/:/app/keys cromega/keyguard
+docker run -p 8000:3459 -v config.json:/app/config.json -v keys/:/app/keys cromega/keyguard
 ```
 
 ### 4. Load key!
