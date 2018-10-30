@@ -54,6 +54,8 @@ Usage of ./keyguard:
         path to the config file (default "config.json")
 ```
 
+The server port can be configured via the `PORT` environment variable. It defaults to `3459`.
+
 ### Important
 
 You have to create an API key at [YubiCo](https://upgrade.yubico.com/getapikey/)
