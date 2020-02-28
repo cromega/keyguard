@@ -2,6 +2,7 @@
 
 [![Build Status](https://travis-ci.org/AndrewBurian/powermux.svg?branch=master)](https://travis-ci.org/AndrewBurian/powermux)
 [![codecov](https://codecov.io/gh/AndrewBurian/powermux/branch/master/graph/badge.svg)](https://codecov.io/gh/AndrewBurian/powermux)
+[![Release](https://img.shields.io/github/release/AndrewBurian/powermux.svg)](https://github.com/AndrewBurian/powermux/releases)
 
 
 A drop-in replacement for Go's `http.ServeMux` with all the missing features
@@ -99,6 +100,16 @@ mux.Route("/c").Middleware(midC)
  
 // requests to /a/b will run midRoot, midA, midB, 
 // then any handlers on Route("/a/b")
+```
+
+Middleware can also be set up to selectively execute based on the HTTP method of the request.
+
+The middleware function variants `MiddlewareFor` and `MiddlewareExceptFor` either set middleware to execute on only
+specified methods, on all methods except the specified ones respectively.
+
+```go
+// don't run this middleware on OPTIONS requests
+mux.Route("/a").MiddlewareExceptFor(ignoreCorsMid, http.MethodOptions)
 ```
 
 ## Host specific routes

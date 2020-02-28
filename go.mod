@@ -1,6 +1,8 @@
 module github.com/cromega/keyguard
 
+go 1.14
+
 require (
-	github.com/AndrewBurian/powermux v0.0.0-00000000000000-593c0f2b2e9f99b4aa366ebaa44323169458724d
-	github.com/GeertJohan/yubigo v0.0.0-20140521141543-b1764f04aa9b
+	github.com/AndrewBurian/powermux v1.1.0
+	github.com/GeertJohan/yubigo v0.0.0-20190917122436-175bc097e60e
 )

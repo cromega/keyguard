@@ -39,6 +39,57 @@ func (l childList) Search(pattern string) *Route {
 	return nil
 }
 
+type verbFlag uint8
+
+const (
+	flagGet = verbFlag(1) << iota
+	flagHead
+	flagPost
+	flagPut
+	flagPatch
+	flagDelete
+	flagConnect
+	flagOptions
+	flagAny = ^verbFlag(0)
+)
+
+// Check if the verb matches the available flags
+// never match a zero flag
+func (f verbFlag) Matches(v verbFlag) bool {
+	if v == 0 {
+		return false
+	}
+	return f&v == v
+}
+
+func getVerbFlagForMethod(method string) verbFlag {
+	switch method {
+	case http.MethodGet:
+		return flagGet
+	case http.MethodHead:
+		return flagHead
+	case http.MethodPost:
+		return flagPost
+	case http.MethodPut:
+		return flagPut
+	case http.MethodPatch:
+		return flagPatch
+	case http.MethodDelete:
+		return flagDelete
+	case http.MethodConnect:
+		return flagConnect
+	case http.MethodOptions:
+		return flagOptions
+	default:
+		panic("powermux: getVerbFlag: not a valid http method: " + method)
+	}
+}
+
+type middlewareForVerb struct {
+	mid  Middleware
+	verb verbFlag
+}
+
 var pathPartsPool = &sync.Pool{
 	New: func() interface{} {
 		return make([]string, 0, 5)
@@ -59,7 +110,7 @@ type Route struct {
 	// if we are a rooted sub tree '/dir/*'
 	isWildcard bool
 	// the array of middleware this node invokes
-	middleware []Middleware
+	middleware []*middlewareForVerb
 	// child nodes
 	children childList
 	// child node for path parameters
@@ -75,7 +126,7 @@ type Route struct {
 func newRoute() *Route {
 	return &Route{
 		handlers:   make(map[string]http.Handler),
-		middleware: make([]Middleware, 0),
+		middleware: make([]*middlewareForVerb, 0),
 		children:   make([]*Route, 0),
 	}
 }
@@ -112,12 +163,17 @@ func (r *Route) execute(ex *routeExecution, method, pattern string) {
 // this node matched, not if anything was added to the execution.
 func (r *Route) getExecution(method string, pathParts []string, ex *routeExecution) {
 
-	var curRoute *Route = r
+	curRoute := r
+	verb := getVerbFlagForMethod(method)
 
 	for {
 
-		// save all the middleware
-		ex.middleware = append(ex.middleware, curRoute.middleware...)
+		// save all the middleware for matching verbs
+		for i := range curRoute.middleware {
+			if curRoute.middleware[i].verb.Matches(verb) {
+				ex.middleware = append(ex.middleware, curRoute.middleware[i].mid)
+			}
+		}
 
 		// save not found handler
 		if h, ok := curRoute.handlers[notFound]; ok {
@@ -360,8 +416,79 @@ func (r *Route) getChildren() []*Route {
 //
 // Middlewares are executed if the path to the target route crosses this route.
 func (r *Route) Middleware(m Middleware) *Route {
-	r.middleware = append(r.middleware, m)
+	r.middleware = append(r.middleware, &middlewareForVerb{
+		mid:  m,
+		verb: flagAny,
+	})
 	return r
+}
+
+// MiddlewareFor adds a middleware to this node, but will only be executed
+// for requests with the verb specified.
+// Verbs are case sensitive, and should use the `http.Method*` constants.
+// Panics if any of the verbs provided are unknown.
+func (r *Route) MiddlewareFor(m Middleware, verbs ...string) *Route {
+
+	// Equivalent to none
+	if len(verbs) == 0 {
+		return r
+	}
+
+	f := verbFlag(0)
+	for _, verb := range verbs {
+		f = f | getVerbFlagForMethod(verb)
+	}
+
+	// we don't check if this is equivalent to flagAny since a
+	// fully loaded flag set is the same as the flagAny
+
+	r.middleware = append(r.middleware, &middlewareForVerb{
+		mid:  m,
+		verb: f,
+	})
+
+	return r
+
+}
+
+// MiddlewareExceptFor adds a middleware to this node, but will only be executed
+// for requests that are not in the list of verbs.
+// Verbs are case sensitive, and should use the `http.Method*` constants.
+// Panics if any of the verbs provided are unknown.
+func (r *Route) MiddlewareExceptFor(m Middleware, verbs ...string) *Route {
+
+	// Equivalent to any
+	if len(verbs) == 0 {
+		return r.Middleware(m)
+	}
+
+	// build the list as if we are calculating For
+	f := verbFlag(0)
+	for _, verb := range verbs {
+		f = f | getVerbFlagForMethod(verb)
+	}
+
+	// then invert to get ExceptFor
+	f = ^f
+
+	// Equivalent to none
+	if f == 0 {
+		return r
+	}
+
+	r.middleware = append(r.middleware, &middlewareForVerb{
+		mid:  m,
+		verb: f,
+	})
+
+	return r
+
+}
+
+// MiddlewareExceptForOptions is shorthand for MiddlewareExceptFor with
+// http.MethodOptions as the only excepted method
+func (r *Route) MiddlewareExceptForOptions(m Middleware) *Route {
+	return r.MiddlewareExceptFor(m, http.MethodOptions)
 }
 
 // MiddlewareFunc registers a plain function as a middleware.
