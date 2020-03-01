@@ -1,0 +1,66 @@
+resources:
+- name: code
+  type: git
+  source:
+    uri: git@github.com:cromega/keyguard
+    private_key: {{deploy-key}}
+- name: image
+  type: docker-image
+  source:
+    repository: cromega/keyguard
+    username: cromega
+    password: {{dockerhub-password}}
+- name: kube
+  type: kubernetes
+- name: kubeconfig
+  type: s3
+  source:
+    bucket: sublimia-ci-bucket-platform
+    versioned_file: k3s.yml
+    access_key_id: {{ci-access-key-id}}
+    secret_access_key: {{ci-secret-access-key}}
+    region_name: eu-west-1
+
+jobs:
+- name: build
+  plan:
+  - get: code
+    trigger: true
+  - task: test
+    file: code/ci/test.yml
+  - put: image
+    params:
+      build: code/
+- name: deploy
+  plan:
+  - in_parallel:
+    - get: code
+      trigger: true
+      passed: [build]
+    - get: kubeconfig
+  - task: prepare_deployment
+    file: code/ci/prepare_deployment.yml
+    params:
+      KG_PUBLIC_URL: https://key.platform.sublimia.nl
+      KG_YUBI_CLIENT_ID: {{yubico-client-id}}
+      KG_YUBI_API_KEY: {{yubico-api-key}}
+      KG_PRIVATE_KEY: {{private-key}}
+  - put: kube
+    params:
+      kubectl: apply -f deployment/secret.yml -f deployment/deployment.yml -f deployment/service.yml -f deployment/ingress.yml
+      namespace: sublimia
+      kubeconfig_file: kubeconfig/k3s.yml
+      wait_until_ready: 0
+  - put: kube
+    params:
+      kubectl: patch deploy keyguard -p '{"spec":{"template":{"metadata":{"labels":{"updated_at":"'$(date +%s)'"}}}}}'
+      namespace: sublimia
+      kubeconfig_file: kubeconfig/k3s.yml
+      wait_until_ready_selector: app=keyguard
+
+resource_types:
+- name: kubernetes
+  type: docker-image
+  source:
+    repository: zlabjp/kubernetes-resource
+    tag: "1.17"
