@@ -19,5 +19,20 @@ spec:
           image: cromega/keyguard:latest
           imagePullPolicy: Always
           env:
-            - name: PORT
-              value: 8000
+            - name: KG_PUBLIC_URL
+              value: $KG_PUBLIC_URL
+            - name: KG_PRIVATE_KEY
+              value: $KG_PRIVATE_KEY
+            - name: KG_YUBI_CLIENT_ID
+              value: $KG_YUBI_CLIENT_ID
+            - name: KG_YUBI_API_KEY
+              value: "/etc/keyguard/id_rsa"
+          volumeMounts:
+            - name: private-key
+              mountPath: "/etc/keyguard"
+              readOnly: true
+      volumes:
+        - name: private-key
+          secret:
+            secretName: private-key
+            defaultMode: 0600
