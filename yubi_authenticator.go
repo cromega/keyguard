@@ -1,46 +1,38 @@
 package main
 
 import (
-	"errors"
 	"github.com/GeertJohan/yubigo"
+	"github.com/kelseyhightower/envconfig"
 )
+
+type yubiConfig struct {
+	ClientId string `envconfig:"CLIENT_ID" required:"true"`
+	ApiKey   string `envconfig:"API_KEY" required:"true"`
+	ApiHost  string `envconfig:"API_HOST" default:"api.yubico.com/wsapi/2.0/verify"`
+	UseHttps bool   `envconfig:"USE_HTTPS" default:"true"`
+}
 
 type yubiAuth struct {
 	authenticator *yubigo.YubiAuth
 }
 
-const (
-	defaultApiEndpoint = "api.yubico.com/wsapi/2.0/verify"
-)
-
-func NewAuthenticator(config map[string]interface{}) (authenticator, error) {
-	raw := config["clientId"]
-	clientId, ok := raw.(string)
-	if !ok || clientId == "" {
-		return nil, errors.New("missing clientId from auth config")
+func NewYubiAuthenticator() (authenticator, error) {
+	var c yubiConfig
+	err := envconfig.Process("KG_YUBI", &c)
+	if err != nil {
+		envconfig.Usage("KG_YUBI", &c)
+		return nil, err
 	}
 
-	raw = config["apiKey"]
-	apiKey, ok := raw.(string)
-	if !ok || apiKey == "" {
-		return nil, errors.New("missing clientId from auth config")
-	}
-
-	yubi, err := yubigo.NewYubiAuth(clientId, apiKey)
+	yubi, err := yubigo.NewYubiAuth(c.ClientId, c.ApiKey)
 	if err != nil {
 		return nil, err
 	}
 
+	yubi.SetApiServerList(c.ApiHost)
+	yubi.UseHttps(c.UseHttps)
+
 	auth := yubiAuth{authenticator: yubi}
-
-	raw = config["apiEndpoint"]
-	if apiEndpoint, _ := raw.(string); apiEndpoint != "" {
-		auth.authenticator.SetApiServerList(apiEndpoint)
-	}
-
-	raw = config["preferHttp"]
-	preferHttp, _ := raw.(bool)
-	auth.authenticator.UseHttps(!preferHttp)
 
 	return &auth, nil
 }

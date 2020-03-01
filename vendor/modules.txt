@@ -4,3 +4,6 @@ github.com/AndrewBurian/powermux
 # github.com/GeertJohan/yubigo v0.0.0-20190917122436-175bc097e60e
 ## explicit
 github.com/GeertJohan/yubigo
+# github.com/kelseyhightower/envconfig v1.4.0
+## explicit
+github.com/kelseyhightower/envconfig

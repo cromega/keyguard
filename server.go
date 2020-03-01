@@ -55,7 +55,7 @@ func (s *server) rootHandler() http.HandlerFunc {
 			expiry, _ = strconv.Atoi(expiryParam)
 		}
 
-		keyURL := fmt.Sprintf("%s/key", config.PublicURL)
+		keyURL := fmt.Sprintf("%s/key", s.config.PublicURL)
 		expirySeconds := expiry * 3600
 
 		templateParams := struct {

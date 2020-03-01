@@ -1,44 +1,52 @@
 package main
 
 import (
-	"flag"
 	logger "log"
 	"net/http"
-	"os"
+
+	"github.com/kelseyhightower/envconfig"
 )
 
-var config configuration
+type configuration struct {
+	SSHKey       string `envconfig:"SSH_KEY" default:"id_rsa"`
+	LoaderScript string `envconfig:"LOADER_SCRIPT" default:"loader.sh"`
+	PublicURL    string `envconfig:"PUBLIC_URL" required:"true"`
+	AuthModule   string `envconfig:"AUTH_MODULE" default:"yubikey"`
+	Port         string `envconfig:"PORT" default:"8000"`
+}
 
 func main() {
-	var configPath = flag.String("configPath", "config.json", "path to the config file")
-	flag.Parse()
-
-	file, err := os.Open(*configPath)
+	server, err := initialize()
 	if err != nil {
-		panic(err)
-	}
-	defer file.Close()
-
-	config, err = configure(file)
-	if err != nil {
-		panic(err)
+		logger.Fatal(err)
 	}
 
-	auth, err := NewAuthenticator(config.Auth)
+	http.ListenAndServe(":"+server.config.Port, server.router)
+}
 
+func initialize() (server, error) {
+	var c configuration
+	err := envconfig.Process("KG", &c)
 	if err != nil {
-		panic(err)
+		envconfig.Usage("KG", &c)
+		logger.Fatal(err)
 	}
 
-	server := newServer(config, auth)
+	var auth authenticator
+	switch c.AuthModule {
+	case "yubikey":
+		auth, err = NewYubiAuthenticator()
+		if err != nil {
+			logger.Fatal(err)
+		}
+	default:
+		logger.Fatal("no such authenticator: " + c.AuthModule)
+	}
+
+	server := newServer(c, auth)
 	server.routes()
 
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "3459"
-	}
-
-	http.ListenAndServe(":"+port, server.router)
+	return server, nil
 }
 
 func log(message interface{}) {
