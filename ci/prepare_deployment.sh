@@ -3,9 +3,11 @@
 apk update
 apk add gettext
 
-pushd code/ci/k8s
+buildroot=$PWD
+cd code/ci/k8s
 envsubst < deployment.yml > temp.yml
 mv temp.yml deployment.yml
-popd
+cd $buildroot
 
 cp code/ci/k8s/* deployment/
+echo "$PRIVATE_KEY" > deployment/private_key
