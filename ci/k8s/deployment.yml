@@ -26,7 +26,7 @@ spec:
             - name: KG_YUBI_CLIENT_ID
               value: $KG_YUBI_CLIENT_ID
             - name: KG_YUBI_API_KEY
-              value: "/etc/keyguard/id_rsa"
+              value: "/etc/keyguard/private_key"
           volumeMounts:
             - name: private-key
               mountPath: "/etc/keyguard"
@@ -34,5 +34,5 @@ spec:
       volumes:
         - name: private-key
           secret:
-            secretName: private-key
+            secretName: keyguard-private-key
             defaultMode: 0600
