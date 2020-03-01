@@ -20,13 +20,13 @@ spec:
           imagePullPolicy: Always
           env:
             - name: KG_PUBLIC_URL
-              value: $KG_PUBLIC_URL
+              value: "$KG_PUBLIC_URL"
             - name: KG_PRIVATE_KEY
-              value: $KG_PRIVATE_KEY
-            - name: KG_YUBI_CLIENT_ID
-              value: $KG_YUBI_CLIENT_ID
-            - name: KG_YUBI_API_KEY
               value: "/etc/keyguard/private_key"
+            - name: KG_YUBI_CLIENT_ID
+              value: "$KG_YUBI_CLIENT_ID"
+            - name: KG_YUBI_API_KEY
+              value: "$KG_YUBI_API_KEY"
           volumeMounts:
             - name: private-key
               mountPath: "/etc/keyguard"
