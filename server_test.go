@@ -69,7 +69,7 @@ func TestKeysHandlerRequiresAuthentication(t *testing.T) {
 	response := httptest.NewRecorder()
 
 	server := newServer(
-		configuration{SSHKey: "testdata/id_rsa"},
+		configuration{PrivateKey: "testdata/id_rsa"},
 		&dummyAuth{},
 	)
 	server.routes()
@@ -93,7 +93,7 @@ func TestKeysHandlerRequiresValidCredentials(t *testing.T) {
 	request.SetBasicAuth("cromega", "supersecurepassword")
 
 	server := newServer(
-		configuration{SSHKey: "testdata/id_rsa"},
+		configuration{PrivateKey: "testdata/id_rsa"},
 		&dummyAuth{ret: true},
 	)
 	server.routes()
@@ -112,7 +112,7 @@ func TestKeysHandlerAuthenticatesTheRequest(t *testing.T) {
 
 	auth := &dummyAuth{ret: true}
 	server := newServer(
-		configuration{SSHKey: "testdata/id_rsa"},
+		configuration{PrivateKey: "testdata/id_rsa"},
 		auth,
 	)
 	server.routes()
@@ -142,7 +142,7 @@ func TestKeysHandlerRespondsWithKey(t *testing.T) {
 
 	auth := &dummyAuth{ret: true}
 	server := newServer(
-		configuration{SSHKey: "testdata/id_rsa"},
+		configuration{PrivateKey: "testdata/id_rsa"},
 		auth,
 	)
 	server.routes()
@@ -159,7 +159,7 @@ func TestPublicKeyHandlerSendsPublicKey(t *testing.T) {
 	response := httptest.NewRecorder()
 
 	server := newServer(
-		configuration{SSHKey: "testdata/real_id_rsa"},
+		configuration{PrivateKey: "testdata/real_id_rsa"},
 		nil,
 	)
 	server.routes()

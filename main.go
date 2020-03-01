@@ -8,7 +8,7 @@ import (
 )
 
 type configuration struct {
-	SSHKey       string `envconfig:"SSH_KEY" default:"id_rsa"`
+	PrivateKey   string `envconfig:"PRIVATE_KEY" default:"id_rsa"`
 	LoaderScript string `envconfig:"LOADER_SCRIPT" default:"loader.sh"`
 	PublicURL    string `envconfig:"PUBLIC_URL" required:"true"`
 	AuthModule   string `envconfig:"AUTH_MODULE" default:"yubikey"`

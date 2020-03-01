@@ -82,7 +82,7 @@ func (s *server) keyHandler() http.HandlerFunc {
 			return
 		}
 
-		data, err := readFile(s.config.SSHKey)
+		data, err := readFile(s.config.PrivateKey)
 		if err != nil {
 			log(err)
 			setErrorResponse(500, w)
@@ -95,7 +95,7 @@ func (s *server) keyHandler() http.HandlerFunc {
 
 func (s *server) pubKeyHandler() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		cmd := exec.Command("ssh-keygen", "-y", "-f", s.config.SSHKey)
+		cmd := exec.Command("ssh-keygen", "-y", "-f", s.config.PrivateKey)
 		pubkey, err := cmd.Output()
 
 		if err != nil {
