@@ -7,29 +7,25 @@ Only [YubiKey](https://www.yubico.com/why-yubico/for-individuals/) One-time pass
 
 ## Usage
 
-### 1. Create configuration
+The app is configured via environment variables:
 
 ```
-$ cat config.json
-{
-  "SSHKey": "id_rsa", # path to private key
-  "LoaderScript": "loader.sh", # path to the loader script
-  "PublicUrl": "https://key.yourdomain.org", # public URL where the /key endpoint can be queried
-  "Auth": {
-    "clientId": "12345", # yubico api credentials
-    "apiKey": "apikey",
-    "preferHttp": false
-  }
-}
+KG_PUBLIC_URL: the public URL where the /key can be queried, required
+KG_PRIVATE_KEY: path to the ssh private key, default: id_rsa
+KG_LOADER_SCRIPT: path to the loader script, default: loader.sh
+KG_AUTH_MODULE: name of the authentication module; default: yubikey
+KG_PORT: the http listen port, default: 8000
+
+# yubikey options
+KG_YUBI_CLIENT_ID: the yubico client id, required
+KG_YUBI_API_KEY: the yubico api key, required
+KG_YUBI_API_HOST: the yubi auth server, default: api.yubico.com/wsapi/2.0/verify
+KG_YUBI_USE_HTTPS: protocol for contacting the auth server, default: true
 ```
 
-### 3. Run
+### Load key!
 
-```
-docker run -p 8000:3459 -v config.json:/app/config.json -v keys/:/app/keys cromega/keyguard
-```
-
-### 4. Load key!
+Deploy the app to your favourite application platform and:
 
 ```
 $ curl -s https://key.yourdomain.org | bash
@@ -46,16 +42,6 @@ certain services such as GitHub.
 curl -s https://key.yourdomain.org/pubkey
 ```
 
-Configuration options:
-
-```
-Usage of ./keyguard:
-  -configPath string
-        path to the config file (default "config.json")
-```
-
-The server port can be configured via the `PORT` environment variable. It defaults to `3459`.
-
 ### Important
 
 You have to create an API key at [YubiCo](https://upgrade.yubico.com/getapikey/)
@@ -65,6 +51,12 @@ to use the authenticator.
 
 ```
 $ go build
+```
+
+## Testing
+
+```
+bin/test
 ```
 
 ## How it works
@@ -84,14 +76,15 @@ eg: `/3`
 
 `/pubkey` just responds with the public key without authentication.
 
+## K8s deployment
+
+Check the [ci/k8s](https://github.com/cromega/keyguard/tree/master/ci/k8s) folder for an example
+
 ## Running it on Cloud Foundry
 
-You can actually run KeyGuard on Cloud Foundry!
+Build it, put your key in the folder and `cf push`.
 
-Build it, put your key and config.json in the folder and `cf push`. Don't forget
-to configure `PublicUrl` to the correct route beforehand.
-
-You can use an encrypted SSH key if you are scared of pushing your key to a public cloud.
+You can use an encrypted SSH key if you are not comfortable with pushing your private key somewhere
 
 An example app manifest looks something like this:
 
@@ -100,6 +93,10 @@ applications:
 - name: keyguard
   memory: 32m
   buildpack: binary_buildpack
-  command: ./keyguard --configPath=config.json
+  command: ./keyguard
+  env:
+    KG_PUBLIC_URL: https://key.yourdomain.org
+    KG_YUBI_CLIENT_ID: 1234
+    KG_YUBI_API_KEY: foobar
 ```
 
