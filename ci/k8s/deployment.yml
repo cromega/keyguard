@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: keyguard
+  labels:
+    app: keyguard
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: keyguard
+  template:
+    metadata:
+      labels:
+        app: keyguard
+    spec:
+      containers:
+        - name: app
+          image: cromega/keyguard:latest
+          imagePullPolicy: Always
+          env:
+            - name: PORT
+              value: 8000
