@@ -5,11 +5,11 @@ apk add gettext
 
 buildroot=$PWD
 cd code/ci/k8s
-envsubst < deployment.yml > temp.yml
-mv temp.yml deployment.yml
 
-envsubst < secret.yml > temp.yml
-mv temp.yml secret.yml
+for file in *.yml; do
+  envsubst < $file > temp
+  mv temp $file
+done
+
 cd $buildroot
-
 cp code/ci/k8s/* deployment/
