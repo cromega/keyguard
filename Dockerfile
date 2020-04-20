@@ -10,7 +10,7 @@ FROM alpine:latest
 COPY --from=builder /build/keyguard /app/
 COPY loader.sh /app/
 
-RUN apk update && apk add openssh-keygen ca-certificates
+RUN apk add --no-cache openssh-keygen ca-certificates
 
 ENV PORT 8000
 
