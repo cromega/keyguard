@@ -1,18 +1,21 @@
 FROM golang:1.14-alpine3.11 AS builder
+
 ADD . /build
-ENV CGO_ENABLED=0
 WORKDIR /build
+
+ENV CGO_ENABLED=0
 RUN go version && go build -mod=vendor
 
 
 FROM alpine:latest
 
 COPY --from=builder /build/keyguard /app/
-COPY loader.sh /app/
+COPY --from=builder /build/loader.sh /app/
 
-RUN apk add --no-cache openssh-keygen ca-certificates
-
-ENV PORT 8000
+RUN apk add --no-cache openssh-keygen && \
+    addgroup -S keyguard && adduser -S -s /bin/false -G keyguard keyguard
 
 WORKDIR /app
-CMD /app/keyguard
+USER keyguard
+
+ENTRYPOINT ["/app/keyguard"]
