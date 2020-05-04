@@ -1,0 +1,23 @@
+name: Test
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    container: golang:1.14-alpine3.11
+    steps:
+    - name: Check out
+      uses: actions/checkout@v2
+
+    - name: Prepare container
+      run: |
+        apk add --no-cache openssh-keygen
+        chmod 600 testdata/real_id_rsa
+      
+    - name: Test
+      run: go test -v
