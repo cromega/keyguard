@@ -13,11 +13,13 @@ jobs:
     steps:
     - name: Check out
       uses: actions/checkout@v2
-
+      
     - name: Prepare container
       run: |
         apk add --no-cache openssh-keygen
         chmod 600 testdata/real_id_rsa
       
     - name: Test
-      run: go test -v
+      run: |
+        export CGO_ENABLED=0
+        go test -v
