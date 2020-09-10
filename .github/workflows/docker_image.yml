@@ -39,7 +39,7 @@ jobs:
     - name: Push
       run: docker push cromega/keyguard
 
- trigger-deploy:
+  trigger-deploy:
     needs: [push]
     runs-on: ubuntu-latest
     steps:
