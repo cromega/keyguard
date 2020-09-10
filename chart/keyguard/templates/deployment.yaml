@@ -13,6 +13,8 @@ spec:
     metadata:
       labels:
         app: keyguard
+      annotations:
+        deployedAt: "{{ date "20060102150405" .Release.Time }}"
     spec:
       containers:
         - name: app
