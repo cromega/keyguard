@@ -1,0 +1,11 @@
+# Default values for keyguard.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+public_url: ""
+
+yubico:
+  client_id: ""
+  api_key: ""
+
+private_key_base64: ""

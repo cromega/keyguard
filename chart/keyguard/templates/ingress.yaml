@@ -4,7 +4,7 @@ metadata:
   name: keyguard
 spec:
   rules:
-  - host: key.platform.sublimia.nl
+  - host: {{ .Values.public_url }}
     http:
       paths:
       - backend:

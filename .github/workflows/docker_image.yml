@@ -38,3 +38,16 @@ jobs:
       run: docker build -t cromega/keyguard .
     - name: Push
       run: docker push cromega/keyguard
+
+ trigger-deploy:
+    needs: [push]
+    runs-on: ubuntu-latest
+    steps:
+    - name: Trigger deployment
+      env:
+        TOKEN: ${{ secrets.repo_token }}
+      run: |
+        curl -X POST \
+          -H "Authorization: token $TOKEN" \
+          https://api.github.com/repos/cromega/sublimia-platform/dispatches \
+          --data '{"event_type":"deploy:keyguard"}'

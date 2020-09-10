@@ -20,13 +20,18 @@ spec:
           imagePullPolicy: Always
           env:
             - name: KG_PUBLIC_URL
-              value: "$KG_PUBLIC_URL"
+              value: "{{ .Values.public_url }}"
             - name: KG_PRIVATE_KEY
               value: "/etc/keyguard/private_key"
             - name: KG_YUBI_CLIENT_ID
-              value: "$KG_YUBI_CLIENT_ID"
+              value: "{{ .Values.yubico.client_id }}"
             - name: KG_YUBI_API_KEY
-              value: "$KG_YUBI_API_KEY"
+              value: "{{ .Values.yubico.api_key }}"
+          resources:
+            requests:
+              memory: 64Mi
+            limits:
+              memory: 64Mi
           volumeMounts:
             - name: private-key
               mountPath: "/etc/keyguard"
@@ -35,4 +40,4 @@ spec:
         - name: private-key
           secret:
             secretName: keyguard-private-key
-            defaultMode: 0600
+            defaultMode: 0444
