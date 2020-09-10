@@ -22,7 +22,7 @@ spec:
           imagePullPolicy: Always
           env:
             - name: KG_PUBLIC_URL
-              value: "{{ .Values.public_url }}"
+              value: "https://{{ .Values.public_hostname }}"
             - name: KG_PRIVATE_KEY
               value: "/etc/keyguard/private_key"
             - name: KG_YUBI_CLIENT_ID

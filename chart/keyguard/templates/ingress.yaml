@@ -6,7 +6,7 @@ metadata:
     app: keyguard
 spec:
   rules:
-  - host: {{ .Values.public_url }}
+  - host: {{ .Values.public_hostname }}
     http:
       paths:
       - backend:

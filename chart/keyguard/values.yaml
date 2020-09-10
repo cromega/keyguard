@@ -2,7 +2,7 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-public_url: ""
+public_hostname: ""
 
 yubico:
   client_id: ""
