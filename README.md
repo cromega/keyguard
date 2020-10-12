@@ -44,8 +44,9 @@ curl -s https://key.yourdomain.org/pubkey
 
 ### Important
 
-You have to create an API key at [YubiCo](https://upgrade.yubico.com/getapikey/)
-to use the authenticator.
+You have to either
+* create an API key at [YubiCo](https://upgrade.yubico.com/getapikey/) and use the offical validation service, or
+* [Run your own yubi validation server](https://developers.yubico.com/OTP/Guides/Self-hosted_OTP_validation.html), keyguard can be configured to talk to a custom endpoint
 
 ## Building
 
