@@ -3,9 +3,10 @@ FROM golang:1.16.3-alpine3.13 AS builder
 ADD . /build
 WORKDIR /build
 
+RUN apk add --no-cache openssh-keygen && chmod 600 testdata/*
+
 ENV CGO_ENABLED=0
 RUN go version && go build -mod=vendor
-
 
 FROM alpine:latest
 

@@ -7,40 +7,29 @@ on:
     branches: [ master ]
 
 jobs:
-  test:
+  release:
     runs-on: ubuntu-latest
-    container: golang:1.16.3-alpine3.13
     steps:
     - name: Check out
       uses: actions/checkout@v2
 
-    - name: Prepare container
-      run: |
-        apk add --no-cache openssh-keygen
-        chmod 600 testdata/real_id_rsa
-
     - name: Test
       run: |
-        export CGO_ENABLED=0
-        go test -v
+        docker build --target builder -t base .
+        docker run --rm base go test -v
 
-  push:
-    needs: [test]
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-    - name: Docker login
+    - name: Build final image
+      run: docker build -t cromega/keyguard .
+
+    - name: Docker push
       env:
         DOCKERHUB_PW: ${{ secrets.dockerhub_password }}
-      run: echo "$DOCKERHUB_PW" | docker login -u cromega --password-stdin
-
-    - name: Build
-      run: docker build -t cromega/keyguard .
-    - name: Push
-      run: docker push cromega/keyguard
+      run: |
+        echo "$DOCKERHUB_PW" | docker login -u cromega --password-stdin
+        docker push cromega/keyguard
 
   trigger-deploy:
-    needs: [push]
+    needs: [release]
     runs-on: ubuntu-latest
     steps:
     - name: Trigger deployment
