@@ -1,6 +1,6 @@
 module github.com/cromega/keyguard
 
-go 1.14
+go 1.16
 
 require (
 	github.com/AndrewBurian/powermux v1.1.0

@@ -9,7 +9,7 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    container: golang:1.15.2-alpine3.12
+    container: golang:1.16.3-alpine3.13
     steps:
     - name: Check out
       uses: actions/checkout@v2
