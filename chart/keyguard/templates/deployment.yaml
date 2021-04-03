@@ -16,6 +16,7 @@ spec:
       annotations:
         deployedAt: "{{ date "20060102150405" .Release.Time }}"
     spec:
+      automountServiceAccountToken: false
       containers:
         - name: app
           image: cromega/keyguard:latest
