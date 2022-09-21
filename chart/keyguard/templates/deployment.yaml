@@ -23,13 +23,13 @@ spec:
           imagePullPolicy: Always
           env:
             - name: KG_PUBLIC_URL
-              value: "https://{{ .Values.public_hostname }}"
+              value: "https://{{ .Values.publicHostname }}"
             - name: KG_PRIVATE_KEY
               value: "/etc/keyguard/private_key"
             - name: KG_YUBI_CLIENT_ID
-              value: "{{ .Values.yubico.client_id }}"
+              value: "{{ .Values.yubico.clientId }}"
             - name: KG_YUBI_API_KEY
-              value: "{{ .Values.yubico.api_key }}"
+              value: "{{ .Values.yubico.apiKey }}"
           resources:
             requests:
               memory: 64Mi

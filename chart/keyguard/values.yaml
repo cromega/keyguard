@@ -2,10 +2,10 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-public_hostname: ""
+publicHostname: ""
 
 yubico:
-  client_id: ""
-  api_key: ""
+  clientId: ""
+  apiKey: ""
 
-private_key_base64: ""
+privateKeyBase64: ""
