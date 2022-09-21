@@ -36,7 +36,7 @@ jobs:
       env:
         TOKEN: ${{ secrets.repo_token }}
       run: |
-        curl -X POST \
+        curl -f -X POST \
           -H "Authorization: token $TOKEN" \
           https://api.github.com/repos/cromega/sublimia-platform/dispatches \
           --data '{"event_type":"deploy:keyguard"}'
