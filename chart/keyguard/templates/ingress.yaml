@@ -5,6 +5,11 @@ metadata:
   labels:
     app: keyguard
 spec:
+  {{- if .Values.tlsSecret }}
+  tls:
+    - secretName: {{ .Values.tlsSecret }}
+      hosts: [{{ .Values.publicHostname }}]
+  {{- end }}
   rules:
   - host: {{ .Values.publicHostname }}
     http:
