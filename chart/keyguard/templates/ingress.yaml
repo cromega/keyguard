@@ -1,19 +1,23 @@
-apiVersion: networking.k8s.io/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: keyguard
   labels:
     app: keyguard
 spec:
-  {{- if .Values.tlsSecret }}
-  tls:
-    - secretName: {{ .Values.tlsSecret }}
-      hosts: [{{ .Values.publicHostname }}]
-  {{- end }}
   rules:
   - host: {{ .Values.publicHostname }}
     http:
       paths:
-      - backend:
-          serviceName: keyguard
-          servicePort: 80
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: keyguard
+              port:
+                number: 80
+  {{- if .Values.tlsSecret }}
+  tls:
+    - hosts: [{{ .Values.publicHostname }}]
+      secretName: {{ .Values.tlsSecret }}
+  {{- end }}
